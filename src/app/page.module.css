@@ -1,10 +1,15 @@
 .page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+  --blue-sky-rgb: 135, 206, 250;
+  /* LightSkyBlue */
+  --gray-cloud-rgb: 169, 169, 169;
+  /* DarkGray */
+  --gray-alpha-200: rgba(var(--gray-cloud-rgb), 0.08);
+  --gray-alpha-100: rgba(var(--gray-cloud-rgb), 0.05);
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
+  --button-primary-hover: #a1c4fd;
+  /* Light Blue */
+  --button-secondary-hover: #e2e2e2;
+  /* Light Gray */
 
   display: grid;
   grid-template-rows: 20px 1fr 20px;
@@ -14,16 +19,26 @@
   padding: 80px;
   gap: 64px;
   font-family: var(--font-geist-sans);
+  background-color: var(--blue-sky-rgb);
+  /* Background color representing clear sky */
 }
 
 @media (prefers-color-scheme: dark) {
   .page {
-    --gray-rgb: 255, 255, 255;
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+    --blue-sky-rgb: 25, 25, 25;
+    /* Dark Gray for dark mode */
+    --gray-cloud-rgb: 200, 200, 200;
+    /* Lighter Gray for dark mode */
+    --gray-alpha-200: rgba(var(--gray-cloud-rgb), 0.145);
+    --gray-alpha-100: rgba(var(--gray-cloud-rgb), 0.06);
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
+    --button-primary-hover: #1e40af;
+    /* Darker Blue */
+    --button-secondary-hover: #333333;
+    /* Dark Gray */
+
+    background-color: var(--blue-sky-rgb);
+    /* Background color for dark mode */
   }
 }
 
@@ -32,6 +47,8 @@
   flex-direction: column;
   gap: 32px;
   grid-row-start: 2;
+  color: var(--gray-cloud-rgb);
+  /* Text color representing cloudiness */
 }
 
 .main ol {
@@ -79,8 +96,9 @@
 }
 
 a.primary {
-  background: var(--foreground);
-  color: var(--background);
+  background: #87ceeb;
+  /* Sky Blue */
+  color: var(--blue-sky-rgb);
   gap: 8px;
 }
 

@@ -1,95 +1,182 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Container,
+  Paper,
+  Box,
+  Switch,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
+import Dashboard from "@/app/components/Dashboard";
+import axios from "axios";
+import { styled } from "@mui/material/styles";
+import { FaCloud, FaWind, FaTemperatureHigh, FaWater } from "react-icons/fa";
+
+const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+
+const ModernSwitch = styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  '& .MuiSwitch-switchBase': {
+    margin: 1,
+    padding: 0,
+    transform: 'translateX(6px)',
+    '&.Mui-checked': {
+      color: '#fff',
+      transform: 'translateX(22px)',
+      '& + .MuiSwitch-track': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+    width: 32,
+    height: 32,
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 20 / 2,
+    backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
+  },
+}));
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [weather, setWeather] = useState(null);
+  const [pollution, setPollution] = useState(null);
+  const [forecast, setForecast] = useState(null);
+  const [uvIndex, setUVIndex] = useState(null);
+  const [unit, setUnit] = useState("metric");
+  const [loading, setLoading] = useState(false);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const fetchWeatherData = async (cityName, unit) => {
+    setLoading(true);
+    try {
+      const weatherRes = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${unit}&appid=${apiKey}`
+      );
+      const pollutionRes = await axios.get(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weatherRes.data.coord.lat}&lon=${weatherRes.data.coord.lon}&appid=${apiKey}`
+      );
+      const forecastRes = await axios.get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`
+      );
+      const uvIndexRes = await axios.get(
+        `https://api.openweathermap.org/data/2.5/uvi?lat=${weatherRes.data.coord.lat}&lon=${weatherRes.data.coord.lon}&appid=${apiKey}`
+      );
+
+      setWeather(weatherRes.data);
+      setPollution(pollutionRes.data);
+      setForecast(forecastRes.data);
+      setUVIndex(uvIndexRes.data);
+    } catch (error) {
+      console.error("Error fetching weather data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWeatherData("Karachi", unit);
+  }, [unit]);
+
+  const toggleUnit = () => {
+    setUnit((prevUnit) => (prevUnit === "metric" ? "imperial" : "metric"));
+  };
+
+  return (
+    <Container maxWidth="md" sx={{ marginTop: 4 }}>
+      <Paper sx={{ padding: 4, marginBottom: 4, backgroundColor: "#f5f5f5", borderRadius: 3, boxShadow: 3 }}>
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            fontFamily: "Arial, sans-serif",
+            letterSpacing: "1px",
+            textAlign: "center",
+            marginBottom: 2,
+            color: "#333",
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          Weather Dashboard
+        </Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 2 }}>
+          <Typography sx={{ mr: 2 }}>Celsius</Typography>
+          <ModernSwitch checked={unit === "imperial"} onChange={toggleUnit} />
+          <Typography sx={{ ml: 2 }}>Fahrenheit</Typography>
+        </Box>
+      </Paper>
+
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+          <CircularProgress />
+        </Box>
+      ) : weather && pollution && forecast && uvIndex ? (
+        <Stack spacing={4}>
+          <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            <Card sx={{ boxShadow: 4, backgroundColor: "#e3f2fd" }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  <FaCloud style={{ marginRight: "8px" }} />
+                  Current Weather
+                </Typography>
+                <Typography variant="body1">
+                  <FaTemperatureHigh size={20} style={{ marginRight: "8px" }} />
+                  Temperature: {weather.main.temp}°{unit === "metric" ? "C" : "F"}
+                </Typography>
+                <Typography variant="body1">
+                  <FaWater size={20} style={{ marginRight: "8px" }} />
+                  Humidity: {weather.main.humidity}%
+                </Typography>
+                <Typography variant="body1">
+                  <FaWind size={20} style={{ marginRight: "8px" }} />
+                  Pressure: {weather.main.pressure} hPa
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ boxShadow: 4, backgroundColor: "#ffecb3" }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Air Pollution
+                </Typography>
+                <Typography variant="body1">
+                  AQI: {pollution.list[0].main.aqi}
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ boxShadow: 4, backgroundColor: "#f0f4c3" }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  UV Index
+                </Typography>
+                <Typography variant="body1">UV Index: {uvIndex.value}</Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Dashboard
+            weather={weather}
+            pollution={pollution}
+            forecast={forecast}
+            uvIndex={uvIndex}
+            unit={unit}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </Stack>
+      ) : (
+        <Typography variant="h6" align="center">
+          No data available
+        </Typography>
+      )}
+    </Container>
   );
 }
