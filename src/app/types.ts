@@ -15,7 +15,7 @@ export interface PollutionData {
     list: [
         {
             main: {
-                aqi: string;
+                aqi: number;
             };
         }
     ];
