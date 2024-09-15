@@ -14,38 +14,38 @@ import {
 } from "@mui/material";
 import Dashboard from "@/app/components/Dashboard";
 import axios from "axios";
-import { styled } from "@mui/material/styles";
 import { FaCloud, FaWind, FaTemperatureHigh, FaWater } from "react-icons/fa";
 import { WeatherData, PollutionData, ForecastData, UVIndexData, Unit } from "./types";
+import ToggleSwitch from "./components/ToggleSwitch";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-const ModernSwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
-  padding: 7,
-  '& .MuiSwitch-switchBase': {
-    margin: 1,
-    padding: 0,
-    transform: 'translateX(6px)',
-    '&.Mui-checked': {
-      color: '#fff',
-      transform: 'translateX(22px)',
-      '& + .MuiSwitch-track': {
-        backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
-      },
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
-    width: 32,
-    height: 32,
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: 20 / 2,
-    backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
-  },
-}));
+// const ModernSwitch = styled(Switch)(({ theme }) => ({
+//   width: 62,
+//   height: 34,
+//   padding: 7,
+//   '& .MuiSwitch-switchBase': {
+//     margin: 1,
+//     padding: 0,
+//     transform: 'translateX(6px)',
+//     '&.Mui-checked': {
+//       color: '#fff',
+//       transform: 'translateX(22px)',
+//       '& + .MuiSwitch-track': {
+//         backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
+//       },
+//     },
+//   },
+//   '& .MuiSwitch-thumb': {
+//     backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+//     width: 32,
+//     height: 32,
+//   },
+//   '& .MuiSwitch-track': {
+//     borderRadius: 20 / 2,
+//     backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#a1c4fd',
+//   },
+// }));
 
 export default function Home() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -94,8 +94,8 @@ export default function Home() {
     <Container maxWidth="md" sx={{ marginTop: 4 }}>
       <Paper sx={{ padding: 4, marginBottom: 4, backgroundColor: "#f5f5f5", borderRadius: 3, boxShadow: 3 }}>
         <Typography
-          variant="h3"
-          component="h1"
+          variant="h5"
+          component="h3"
           sx={{
             fontWeight: "bold",
             fontFamily: "Arial, sans-serif",
@@ -108,10 +108,14 @@ export default function Home() {
           Weather Dashboard
         </Typography>
 
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 2 }}>
-          <Typography sx={{ mr: 2 }}>Celsius</Typography>
-          <ModernSwitch checked={unit === "imperial"} onChange={toggleUnit} />
-          <Typography sx={{ ml: 2 }}>Fahrenheit</Typography>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginBottom: 2 }}>
+
+          <ToggleSwitch
+            label="Celsius / Fahrenheit"
+            checked={unit === "imperial"}
+            onChange={toggleUnit}
+          />
+
         </Box>
       </Paper>
 
