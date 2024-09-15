@@ -1,8 +1,17 @@
 import { Box, Typography, Container, Paper, Card, CardContent, Divider, Stack, CircularProgress } from "@mui/material";
 import { FaTemperatureHigh, FaTint, FaCloudSun, FaSmog } from "react-icons/fa";
+import { ForecastData, PollutionData, Unit, UVIndexData, WeatherData } from "../types";
 
-const Dashboard = ({ weather, pollution, uvIndex, forecast, unit }) => {
-    const convertTemp = (temp) => (unit === 'metric' ? temp : (temp * 9) / 5 + 32).toFixed(2);
+interface DashboardProps {
+    weather: WeatherData;
+    pollution: PollutionData;
+    uvIndex: UVIndexData;
+    forecast: ForecastData;
+    unit: Unit;
+}
+
+const Dashboard = ({ weather, pollution, uvIndex, forecast, unit }: DashboardProps) => {
+    const convertTemp = (temp: number) => (unit === 'metric' ? temp : (temp * 9) / 5 + 32).toFixed(2);
 
     if (!weather || !pollution || !uvIndex || !forecast) {
         return (

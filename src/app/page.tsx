@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Button,
   Card,
   CardContent,
   Typography,
@@ -17,6 +16,7 @@ import Dashboard from "@/app/components/Dashboard";
 import axios from "axios";
 import { styled } from "@mui/material/styles";
 import { FaCloud, FaWind, FaTemperatureHigh, FaWater } from "react-icons/fa";
+import { WeatherData, PollutionData, ForecastData, UVIndexData, Unit } from "./types";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -48,14 +48,14 @@ const ModernSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 export default function Home() {
-  const [weather, setWeather] = useState(null);
-  const [pollution, setPollution] = useState(null);
-  const [forecast, setForecast] = useState(null);
-  const [uvIndex, setUVIndex] = useState(null);
-  const [unit, setUnit] = useState("metric");
-  const [loading, setLoading] = useState(false);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [pollution, setPollution] = useState<PollutionData | null>(null);
+  const [forecast, setForecast] = useState<ForecastData | null>(null);
+  const [uvIndex, setUVIndex] = useState<UVIndexData | null>(null);
+  const [unit, setUnit] = useState<Unit>("metric");
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchWeatherData = async (cityName, unit) => {
+  const fetchWeatherData = async (cityName: string, unit: Unit) => {
     setLoading(true);
     try {
       const weatherRes = await axios.get(
